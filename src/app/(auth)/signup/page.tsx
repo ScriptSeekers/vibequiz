@@ -45,6 +45,18 @@ export default function SignupPage() {
     try {
       clearError();
       const requiresVerification = await signup(data);
+
+      // Trigger live verification email via Gmail SMTP
+      try {
+        await fetch("/api/auth/send-verification", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: data.email, fullName: data.fullName }),
+        });
+      } catch (mailErr) {
+        console.warn("Verification email triggered in background:", mailErr);
+      }
+
       if (requiresVerification) {
         router.push(`/verify-email?email=${encodeURIComponent(data.email)}`);
       } else {

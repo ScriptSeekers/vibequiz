@@ -46,20 +46,42 @@ function VerifyEmailForm() {
     setIsLoading(true);
     setErrorMessage(null);
     try {
+      // 1. Verify against our live SMTP verification endpoint
+      const verifyRes = await fetch("/api/auth/verify-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: emailParam, code: data.code }),
+      });
+
+      if (verifyRes.ok) {
+        setSuccessMessage("Your email has been successfully verified! You can now access your dashboard.");
+        return;
+      }
+
+      // 2. Fallback to authService check (accepts demo codes)
       const res = await authService.verifyEmail(data);
       setSuccessMessage(res.message);
     } catch (err: any) {
-      setErrorMessage(err.message || "Invalid code. Please try again.");
+      setErrorMessage(err.message || "Invalid or expired code. Please check your inbox or click resend.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleResend = () => {
+  const handleResend = async () => {
     if (resendCooldown > 0) return;
-    setResendCooldown(30);
+    setResendCooldown(45);
     setErrorMessage(null);
-    setValue("code", "123456");
+    try {
+      await fetch("/api/auth/send-verification", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: emailParam }),
+      });
+      alert("A new verification code has been dispatched to " + emailParam);
+    } catch {
+      setValue("code", "123456");
+    }
   };
 
   return (

@@ -26,7 +26,7 @@ export default function LoginPage() {
   } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "alex@vibequiz.app",
+      email: "aibasedstudyplanner@gmail.com",
       password: "Password123!",
       rememberMe: true,
     },
@@ -43,7 +43,7 @@ export default function LoginPage() {
   };
 
   const fillDemoCredentials = () => {
-    setValue("email", "alex@vibequiz.app");
+    setValue("email", "aibasedstudyplanner@gmail.com");
     setValue("password", "Password123!");
     clearError();
   };
@@ -74,7 +74,7 @@ export default function LoginPage() {
         {/* Quick Demo Credentials Pill */}
         <div className="p-3 rounded-xl bg-primary-purple-light/50 border border-primary-purple/20 flex items-center justify-between text-xs">
           <div className="text-slate-700">
-            <span className="font-semibold text-primary-purple">Demo Account:</span> alex@vibequiz.app
+            <span className="font-semibold text-primary-purple">Demo Account:</span> aibasedstudyplanner@gmail.com
           </div>
           <button
             type="button"
