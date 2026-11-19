@@ -98,25 +98,48 @@ class MockQuizService implements IQuizService {
     if (onProgress) onProgress(100, "Validating schema compliance and finalizing quiz...");
     await new Promise((r) => setTimeout(r, 400));
 
-    const count = Math.min(Math.max(config.questionCount, 5), 50);
-    const questions: Question[] = [];
-    const availableTypes: QuestionType[] =
-      config.questionTypes.length > 0 ? config.questionTypes : ["single-choice"];
+    let questions: Question[] = [];
 
-    for (let i = 1; i <= count; i++) {
-      const qType = availableTypes[(i - 1) % availableTypes.length];
-      const qDiff: QuestionDifficulty =
-        config.difficulty === "mixed"
-          ? i % 3 === 0
-            ? "hard"
-            : i % 2 === 0
-            ? "medium"
-            : "easy"
-          : (config.difficulty as QuestionDifficulty);
+    // Attempt live Gemini AI generation first
+    try {
+      if (typeof window !== "undefined") {
+        const res = await fetch("/api/generate-quiz", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(config),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data.questions) && data.questions.length > 0) {
+            questions = data.questions;
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("Live AI generation fallback:", e);
+    }
 
-      questions.push(
-        this.createMockQuestion(i, qType, qDiff, config.subject, config.topic)
-      );
+    // Fallback to curriculum synthesis engine if API is unavailable
+    if (questions.length === 0) {
+      const count = Math.min(Math.max(config.questionCount, 5), 50);
+      const availableTypes: QuestionType[] =
+        config.questionTypes.length > 0 ? config.questionTypes : ["single-choice"];
+
+      for (let i = 1; i <= count; i++) {
+        const qType = availableTypes[(i - 1) % availableTypes.length];
+        const qDiff: QuestionDifficulty =
+          config.difficulty === "mixed"
+            ? i % 3 === 0
+              ? "hard"
+              : i % 2 === 0
+              ? "medium"
+              : "easy"
+            : (config.difficulty as QuestionDifficulty);
+
+        questions.push(
+          this.createMockQuestion(i, qType, qDiff, config.subject, config.topic)
+        );
+      }
     }
 
     const quiz: Quiz = {
