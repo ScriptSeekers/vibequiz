@@ -1,0 +1,64 @@
+import * as React from "react";
+import { LucideIcon } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+
+interface StatCardProps {
+  title: string;
+  value: string | number;
+  change?: string;
+  isPositive?: boolean;
+  icon: LucideIcon;
+  iconColor: "purple" | "blue" | "green" | "orange";
+}
+
+const COLOR_VARIANTS = {
+  purple: "bg-primary-purple-light text-primary-purple",
+  blue: "bg-vibe-blue-light text-vibe-blue",
+  green: "bg-vibe-green-light text-vibe-green",
+  orange: "bg-vibe-orange-light text-vibe-orange",
+};
+
+export function StatCard({
+  title,
+  value,
+  change,
+  isPositive = true,
+  icon: Icon,
+  iconColor,
+}: StatCardProps) {
+  return (
+    <Card className="p-4 sm:p-5 border-slate-200/90 hover:border-slate-300 transition-all shadow-xs">
+      <div className="flex items-start justify-between">
+        <div className="space-y-1">
+          <p className="text-xs font-medium text-slate-500">{title}</p>
+          <p className="text-2xl sm:text-3xl font-extrabold font-heading text-slate-900 tracking-tight">
+            {value}
+          </p>
+        </div>
+        <div
+          className={cn(
+            "h-10 w-10 sm:h-11 sm:w-11 rounded-xl flex items-center justify-center shrink-0",
+            COLOR_VARIANTS[iconColor]
+          )}
+        >
+          <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
+        </div>
+      </div>
+
+      {change && (
+        <div className="mt-3 pt-3 border-t border-slate-100 flex items-center gap-1.5 text-xs">
+          <span
+            className={cn(
+              "font-semibold",
+              isPositive ? "text-emerald-600" : "text-amber-600"
+            )}
+          >
+            {change}
+          </span>
+          <span className="text-slate-400">recorded</span>
+        </div>
+      )}
+    </Card>
+  );
+}
