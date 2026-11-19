@@ -163,22 +163,30 @@ ALTER TABLE public.quiz_results ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.ai_generation_logs ENABLE ROW LEVEL SECURITY;
 
 -- Profiles: Users can view and update their own profile
+DROP POLICY IF EXISTS "Users can view own profile" ON public.profiles;
 CREATE POLICY "Users can view own profile" ON public.profiles FOR SELECT USING (auth.uid() = id);
+
+DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;
 CREATE POLICY "Users can update own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id);
 
 -- Quizzes: Users can manage their own quizzes
+DROP POLICY IF EXISTS "Users can manage own quizzes" ON public.quizzes;
 CREATE POLICY "Users can manage own quizzes" ON public.quizzes FOR ALL USING (auth.uid() = user_id);
 
 -- Questions & Options: Readable by quiz owner
+DROP POLICY IF EXISTS "Users can read quiz questions" ON public.questions;
 CREATE POLICY "Users can read quiz questions" ON public.questions FOR SELECT USING (
   EXISTS (SELECT 1 FROM public.quizzes WHERE id = questions.quiz_id AND user_id = auth.uid())
 );
+
+DROP POLICY IF EXISTS "Users can read question options" ON public.question_options;
 CREATE POLICY "Users can read question options" ON public.question_options FOR SELECT USING (
   EXISTS (SELECT 1 FROM public.questions q JOIN public.quizzes qz ON q.quiz_id = qz.id WHERE q.id = question_options.question_id AND qz.user_id = auth.uid())
 );
 
 -- Answer Keys: CRITICAL SECURITY RESTRICTION
 -- Only accessible once attempt is completed OR via service_role backend
+DROP POLICY IF EXISTS "Answer keys hidden until attempt completed" ON public.question_answer_keys;
 CREATE POLICY "Answer keys hidden until attempt completed" ON public.question_answer_keys FOR SELECT USING (
   EXISTS (
     SELECT 1 FROM public.questions q
@@ -190,6 +198,7 @@ CREATE POLICY "Answer keys hidden until attempt completed" ON public.question_an
 );
 
 -- Results: Users can read their own results
+DROP POLICY IF EXISTS "Users can view own results" ON public.quiz_results;
 CREATE POLICY "Users can view own results" ON public.quiz_results FOR SELECT USING (auth.uid() = user_id);
 
 -- ============================================================
@@ -210,6 +219,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
-CREATE OR REPLACE TRIGGER on_auth_user_created
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
