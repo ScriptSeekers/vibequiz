@@ -12,14 +12,25 @@ import { Badge } from "@/components/ui/badge";
 export default function ProfilePage() {
   const { user } = useAuthStore();
 
-  const [fullName, setFullName] = React.useState(user?.fullName || "Alex Johnson");
-  const [email, setEmail] = React.useState(user?.email || "alex@vibequiz.app");
+  const [fullName, setFullName] = React.useState(
+    user?.fullName || (user?.email ? user.email.split("@")[0] : "Learner")
+  );
+  const [email, setEmail] = React.useState(user?.email || "");
   const [educationLevel, setEducationLevel] = React.useState(user?.educationLevel || "undergraduate");
   const [preferredLanguage, setPreferredLanguage] = React.useState(user?.preferredLanguage || "english");
-  const [bio, setBio] = React.useState(
-    user?.bio || "Computer Science undergrad preparing for competitive technical exams and finals."
-  );
+  const [bio, setBio] = React.useState(user?.bio || "");
   const [isSaved, setIsSaved] = React.useState(false);
+
+  React.useEffect(() => {
+    if (user) {
+      if (user.fullName) setFullName(user.fullName);
+      else if (user.email) setFullName(user.email.split("@")[0]);
+      if (user.email) setEmail(user.email);
+      if (user.educationLevel) setEducationLevel(user.educationLevel);
+      if (user.preferredLanguage) setPreferredLanguage(user.preferredLanguage);
+      if (user.bio) setBio(user.bio);
+    }
+  }, [user]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,11 +39,11 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <div className="space-y-6 sm:space-y-8 max-w-4xl mx-auto">
       {/* Title */}
-      <div className="space-y-1 pb-2 border-b border-slate-200">
+      <div className="space-y-1 pb-2 border-b border-slate-200/80">
         <div className="flex items-center gap-2">
-          <Badge variant="purple">Account Settings</Badge>
+          <Badge variant="purple" size="sm">Account Settings</Badge>
         </div>
         <h1 className="text-2xl sm:text-3xl font-extrabold font-heading text-slate-900 tracking-tight">
           User Profile
@@ -54,7 +65,7 @@ export default function ProfilePage() {
         <CardHeader className="pb-4">
           <CardTitle className="text-lg">Personal Details</CardTitle>
           <CardDescription>
-            Update your public persona and academic context for calibrated quiz generation.
+            Update your profile and academic context for calibrated quiz generation.
           </CardDescription>
         </CardHeader>
 
@@ -64,24 +75,17 @@ export default function ProfilePage() {
             <div className="flex items-center gap-4 pb-4 border-b border-slate-100">
               <div className="relative">
                 <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl bg-gradient-to-tr from-primary-purple via-vibe-blue to-vibe-pink flex items-center justify-center text-white font-extrabold text-2xl shadow-md">
-                  {fullName.charAt(0)}
+                  {(fullName || "U").charAt(0).toUpperCase()}
                 </div>
-                <button
-                  type="button"
-                  className="absolute -bottom-1 -right-1 h-7 w-7 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-600 hover:text-primary-purple"
-                  aria-label="Upload Avatar"
-                >
-                  <Camera className="w-3.5 h-3.5" />
-                </button>
               </div>
 
               <div className="space-y-1">
                 <h3 className="font-heading font-bold text-slate-900 text-lg">
-                  {fullName}
+                  {fullName || "Student Learner"}
                 </h3>
-                <p className="text-xs text-slate-500">{email}</p>
+                <p className="text-xs text-slate-500">{email || "No email registered"}</p>
                 <Badge variant="blue" size="sm">
-                  Student Member
+                  Active Student
                 </Badge>
               </div>
             </div>
@@ -96,6 +100,7 @@ export default function ProfilePage() {
                   id="fullName"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
+                  placeholder="Enter your name"
                 />
               </div>
 
@@ -108,7 +113,8 @@ export default function ProfilePage() {
                   id="email"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  disabled
+                  className="bg-slate-50 text-slate-500 cursor-not-allowed"
                 />
               </div>
 
@@ -158,7 +164,7 @@ export default function ProfilePage() {
               />
             </div>
 
-            <Button type="submit" variant="default" size="lg" className="font-bold">
+            <Button type="submit" variant="default" size="lg" className="font-bold min-h-[44px]">
               Save Profile Changes
             </Button>
           </form>

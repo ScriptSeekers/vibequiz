@@ -24,8 +24,8 @@ export function DashboardDrawer({ isOpen, onClose }: DashboardDrawerProps) {
     router.push("/login");
   };
 
-  const displayName = user?.fullName || "Alex Johnson";
-  const displayEmail = user?.email || "alex@vibequiz.app";
+  const displayName = user?.fullName || (user?.email ? user.email.split("@")[0] : "Learner");
+  const displayEmail = user?.email || "Student Account";
 
   if (!isOpen) return null;
 

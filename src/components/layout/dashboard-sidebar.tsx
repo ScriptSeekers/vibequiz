@@ -40,8 +40,8 @@ export function DashboardSidebar() {
     router.push("/login");
   };
 
-  const displayName = user?.fullName || "Alex Johnson";
-  const displayEmail = user?.email || "alex@vibequiz.app";
+  const displayName = user?.fullName || (user?.email ? user.email.split("@")[0] : "Learner");
+  const displayEmail = user?.email || "Student Account";
 
   return (
     <aside className="hidden lg:flex w-64 flex-col fixed inset-y-0 left-0 z-30 bg-white border-r border-slate-200/90 select-none">

@@ -28,11 +28,11 @@ export function StatCard({
   iconColor,
 }: StatCardProps) {
   return (
-    <Card className="p-4 sm:p-5 border-slate-200/90 hover:border-slate-300 transition-all shadow-xs">
-      <div className="flex items-start justify-between">
-        <div className="space-y-1">
-          <p className="text-xs font-medium text-slate-500">{title}</p>
-          <p className="text-2xl sm:text-3xl font-extrabold font-heading text-slate-900 tracking-tight">
+    <Card className="p-4 sm:p-5 border-slate-200/90 hover:border-slate-300 transition-all shadow-xs flex flex-col justify-between">
+      <div className="flex items-start justify-between gap-2">
+        <div className="space-y-1 min-w-0">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{title}</p>
+          <p className="text-2xl sm:text-3xl font-black font-heading text-slate-900 tracking-tight">
             {value}
           </p>
         </div>
@@ -47,16 +47,15 @@ export function StatCard({
       </div>
 
       {change && (
-        <div className="mt-3 pt-3 border-t border-slate-100 flex items-center gap-1.5 text-xs">
+        <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center gap-1.5 text-xs">
           <span
             className={cn(
-              "font-semibold",
-              isPositive ? "text-emerald-600" : "text-amber-600"
+              "font-medium",
+              isPositive ? "text-emerald-600" : "text-slate-500"
             )}
           >
             {change}
           </span>
-          <span className="text-slate-400">recorded</span>
         </div>
       )}
     </Card>

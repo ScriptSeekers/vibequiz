@@ -53,6 +53,8 @@ export interface IQuizService {
   ): Promise<Question>;
   saveQuiz(quiz: Quiz): Promise<Quiz>;
   getQuizById(id: string): Promise<Quiz | null>;
+  getAllQuizzes(): Promise<Quiz[]>;
+  deleteQuiz(id: string): Promise<boolean>;
   getClientView(questions: Question[]): QuestionClientView[];
 }
 
@@ -209,9 +211,26 @@ class MockQuizService implements IQuizService {
   }
 
   async getQuizById(id: string): Promise<Quiz | null> {
-    await new Promise((r) => setTimeout(r, 200));
+    await new Promise((r) => setTimeout(r, 100));
     const all = this.getStoredQuizzes();
     return all[id] || null;
+  }
+
+  async getAllQuizzes(): Promise<Quiz[]> {
+    const all = this.getStoredQuizzes();
+    return Object.values(all).sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }
+
+  async deleteQuiz(id: string): Promise<boolean> {
+    const all = this.getStoredQuizzes();
+    if (all[id]) {
+      delete all[id];
+      this.saveStoredQuizzes(all);
+      return true;
+    }
+    return false;
   }
 
   getClientView(questions: Question[]): QuestionClientView[] {

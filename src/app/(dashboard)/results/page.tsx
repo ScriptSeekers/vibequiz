@@ -76,30 +76,11 @@ function ResultsContent() {
         const activeQuiz = quiz || generatedQuiz || (quizIdParam ? await quizService.getQuizById(quizIdParam) : null);
 
         if (!activeQuiz) {
-          // Demo fallback result
-          const demoQuiz = await quizService.generateQuiz({
-            subject: "Computer Science",
-            topic: "Operating Systems — Process Scheduling",
-            educationLevel: "undergraduate",
-            difficulty: "medium",
-            questionCount: 8,
-            questionTypes: ["single-choice", "true-false", "scenario-based"],
-            language: "english",
-            timeLimitMinutes: 15,
-          });
-
-          // Generate simulated answers with high score
-          const mockAnswers: Record<string, string | string[]> = {};
-          demoQuiz.questions.forEach((q, idx) => {
-            if (idx !== 2 && idx !== 5 && q.correctAnswer) {
-              mockAnswers[q.id] = q.correctAnswer;
-            } else {
-              mockAnswers[q.id] = "opt_b";
-            }
-          });
-
-          const evaluated = await resultsService.evaluateQuiz(demoQuiz, mockAnswers, 420);
-          setResult(evaluated);
+          if (allSaved.length > 0) {
+            setResult(allSaved[0]);
+          } else {
+            setResult(null);
+          }
         } else {
           // Calculate time spent: initial limit - time remaining
           const initialSecs = activeQuiz.timeLimitMinutes > 0 ? activeQuiz.timeLimitMinutes * 60 : 600;
@@ -139,7 +120,7 @@ function ResultsContent() {
     }
   }, [result]);
 
-  if (isLoading || !result) {
+  if (isLoading) {
     return (
       <div className="py-24 text-center space-y-4">
         <div className="w-12 h-12 rounded-2xl bg-primary-purple-light text-primary-purple flex items-center justify-center mx-auto animate-pulse">
@@ -148,6 +129,37 @@ function ResultsContent() {
         <p className="text-sm font-semibold text-slate-700">
           Evaluating responses & synthesizing AI explanations...
         </p>
+      </div>
+    );
+  }
+
+  if (!result) {
+    return (
+      <div className="p-8 sm:p-14 text-center rounded-3xl bg-white border border-slate-200/80 shadow-xs space-y-5 max-w-xl mx-auto my-12">
+        <div className="w-16 h-16 rounded-2xl bg-primary-purple-light text-primary-purple flex items-center justify-center mx-auto shadow-xs">
+          <Trophy className="w-8 h-8" />
+        </div>
+        <div className="space-y-2">
+          <h3 className="font-heading font-extrabold text-slate-900 text-xl sm:text-2xl">
+            No Quiz Results Found
+          </h3>
+          <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
+            Please complete a quiz first to review score breakdowns, topic mastery, and step-by-step explanations.
+          </p>
+        </div>
+        <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <Link href="/create-quiz" className="w-full sm:w-auto">
+            <Button variant="default" size="default" className="w-full sm:w-auto font-bold shadow-md shadow-primary-purple/20 min-h-[44px]">
+              <PlusCircle className="w-4 h-4 mr-1.5" />
+              Create a Quiz
+            </Button>
+          </Link>
+          <Link href="/dashboard" className="w-full sm:w-auto">
+            <Button variant="outline" size="default" className="w-full sm:w-auto text-slate-700 min-h-[44px]">
+              Go to Dashboard
+            </Button>
+          </Link>
+        </div>
       </div>
     );
   }
