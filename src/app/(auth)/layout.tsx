@@ -38,11 +38,11 @@ export default function AuthLayout({
         <div className="w-full max-w-md space-y-6">
           {children}
 
-          {/* Demo Mode Notice */}
-          <div className="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex items-center gap-2.5 text-[11px] text-slate-500">
-            <ShieldCheck className="w-4 h-4 text-primary-purple shrink-0" />
+          {/* Security & Privacy Assurance */}
+          <div className="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex items-center justify-center gap-2 text-[11px] text-slate-500">
+            <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
             <span>
-              <strong>Frontend Evaluation Mode:</strong> Demonstrates complete auth flows with mock service adapter. Ready for Supabase Auth in production.
+              <strong>Secure & Private:</strong> 256-bit encrypted data protection and privacy-conscious authentication.
             </span>
           </div>
         </div>

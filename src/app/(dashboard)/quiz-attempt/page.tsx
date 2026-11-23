@@ -66,18 +66,9 @@ function QuizAttemptContent() {
           targetQuiz = await quizService.getQuizById(quizIdParam);
         }
 
-        // 3. Fallback demo quiz if opened directly without generation
         if (!targetQuiz) {
-          targetQuiz = await quizService.generateQuiz({
-            subject: "Computer Science",
-            topic: "Operating Systems — Process Scheduling",
-            educationLevel: "undergraduate",
-            difficulty: "medium",
-            questionCount: 10,
-            questionTypes: ["single-choice", "scenario-based", "true-false"],
-            language: "english",
-            timeLimitMinutes: 15,
-          });
+          setLoadError("Quiz not found. Please select an assessment from your library or generate a new one.");
+          return;
         }
 
         initAttempt(targetQuiz);

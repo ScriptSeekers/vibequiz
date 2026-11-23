@@ -127,11 +127,6 @@ function VerifyEmailForm() {
               </div>
             )}
 
-            {/* Quick Demo Code Hint */}
-            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-center text-xs text-slate-600">
-              Demo Code: <span className="font-mono font-bold text-primary-purple">123456</span>
-            </div>
-
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-1.5">
                 <Label htmlFor="code" required>

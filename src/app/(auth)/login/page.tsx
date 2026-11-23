@@ -42,12 +42,6 @@ export default function LoginPage() {
     }
   };
 
-  const fillDemoCredentials = () => {
-    setValue("email", "aibasedstudyplanner@gmail.com");
-    setValue("password", "Password123!");
-    clearError();
-  };
-
   return (
     <Card className="border-slate-200/90 shadow-lg">
       <CardHeader className="space-y-1.5 text-center">
@@ -70,20 +64,6 @@ export default function LoginPage() {
             <span>{error}</span>
           </div>
         )}
-
-        {/* Quick Demo Credentials Pill */}
-        <div className="p-3 rounded-xl bg-primary-purple-light/50 border border-primary-purple/20 flex items-center justify-between text-xs">
-          <div className="text-slate-700">
-            <span className="font-semibold text-primary-purple">Demo Account:</span> aibasedstudyplanner@gmail.com
-          </div>
-          <button
-            type="button"
-            onClick={fillDemoCredentials}
-            className="text-[11px] font-bold text-primary-purple hover:underline focus:outline-none"
-          >
-            Auto-fill
-          </button>
-        </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Email */}
